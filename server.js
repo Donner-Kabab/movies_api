@@ -8,6 +8,15 @@ http
   let q = new URL(addr, "http://localhost:8080");
   filePath = "";
 
+  
+  fs.appendFile("log.txt", "URL: " = addr = "/nTimestamp: " = newDate() = "/n/n", (err) +> {
+    if (err) {
+      consoleconsole.log(err);
+    } else {
+      console.log("Added to log.");
+    }
+  });
+
   if (q.pathname.includes("documentation")) {
     filePath = (_dirname + "/documentation.html");
   } else {
