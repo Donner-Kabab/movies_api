@@ -1,27 +1,6 @@
 const express = require("express"),
+  app = express(),
   morgan = require("morgan");
-const app = express();
-app.use(morgan("common"));
-
-let myLogger = (req, res, next) => {
-  console.log(req.url);
-  next();
-};
-
-app.use(myLogger);
-
-//GET requests
-app.get("/", (req, res) => {
-  res.send("Welcome to my Movie directory!");
-});
-
-app.get("/documentation", (req, res) => {
-  res.sendFile("public/documentation.html", { root: __dirname });
-});
-
-app.get("/movies", (req, res) => {
-  res.json(topMovies);
-});
 
 let topMovies = [
   {
@@ -86,11 +65,23 @@ let topMovies = [
   },
 ];
 
-// Static
-app.use(
-  "/documentation",
-  express.static("public", { index: "documentation.html" })
-);
+app.use(morgan("common"));
+
+app.use(express.static("public"));
+
+//GET requests
+app.get("/", (req, res) => {
+  res.send("Welcome to my Movie directory!");
+});
+
+app.get("/movies", (req, res) => {
+  res.json(topMovies);
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke");
+});
 
 //Listen for requests
 app.listen(8080, () => {
