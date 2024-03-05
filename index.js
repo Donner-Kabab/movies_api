@@ -1,36 +1,38 @@
 const express = require("express"),
   app = express(),
   bodyParser = require("body-parser"),
-  //uuid = require("uuid");
   morgan = require("morgan");
 
 app.use(bodyParser.json());
 
 let movies = [
   {
-    title: "Howl's Movie Castle",
+    title: "Howl's Moving Castle",
     director: {
-      Name: "Hayao Miyazaki",
+      name: "Hayao Miyazaki",
+      birthYear: 1941,
     },
     genre: {
-      Name: "Adventure",
+      name: "Adventure",
     },
     releaseYear: "2004",
   },
   {
     title: "The Silence of the Lambs",
     director: {
-      Name: "Jonathan Demme",
+      name: "Jonathan Demme",
+      birthYear: 1944,
     },
     genre: {
-      Name: "Thriller",
+      name: "Thriller",
     },
     releaseYear: "1991",
   },
   {
     title: "Spirited Away",
     director: {
-      Name: "Hayao Miyazaki",
+      name: "Hayao Miyazaki",
+      birthYear: 1941,
     },
     genre: {
       name: "Adventure",
@@ -39,7 +41,10 @@ let movies = [
   },
   {
     title: "Castle in the Sky",
-    directorName: "Hayao Miyazaki",
+    director: {
+      name: "Hayao Miyazaki",
+      birthYear: 1941,
+    },
     genre: {
       name: "Adventure",
     },
@@ -47,7 +52,10 @@ let movies = [
   },
   {
     title: "Ponyo",
-    directorName: "Hayao Miyazaki",
+    director: {
+      name: "Hayao Miyazaki",
+      birthYear: 1941,
+    },
     genre: {
       name: "Adventure",
     },
@@ -55,7 +63,10 @@ let movies = [
   },
   {
     title: "Princess Mononoke",
-    directorName: "Mayao Miyazaki",
+    director: {
+      name: "Mayao Miyazaki",
+      birthYear: 1941,
+    },
     genre: {
       name: "Action",
     },
@@ -63,7 +74,10 @@ let movies = [
   },
   {
     title: "Whisper of the Heart",
-    directorName: "Yoshifumi Kondo",
+    director: {
+      name: "Yoshifumi Kondo",
+      birthYear: 1950,
+    },
     genre: {
       name: "Drama",
     },
@@ -71,7 +85,10 @@ let movies = [
   },
   {
     title: "Annabelle",
-    directorName: "John R. Leonetti",
+    director: {
+      name: "John R. Leonetti",
+      birthYear: 1956,
+    },
     genre: {
       name: "Horror",
     },
@@ -79,7 +96,10 @@ let movies = [
   },
   {
     title: "Annabelle: Creation",
-    directorName: "David F. Sandberg",
+    director: {
+      name: "David F. Sandberg",
+      birthYear: 1981,
+    },
     genre: {
       name: "Horror",
     },
@@ -87,7 +107,10 @@ let movies = [
   },
   {
     title: "Annabelle Comes Home",
-    directorName: "Gary Dauberman",
+    director: {
+      name: "Gary Dauberman",
+      birthYear: "N/A",
+    },
     genre: {
       name: "Horror",
     },
@@ -97,10 +120,9 @@ let movies = [
 
 let users = [
   {
-    username: "JohnDoe",
-    password: "Password",
-    email: "Johndoe@gmail.com",
-    birthdate: "01/01/00",
+    Username: "JohnDoe",
+    Email: "Johndoe@gmail.com",
+    Birthdate: "01/01/00",
   },
 ];
 
@@ -113,7 +135,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to my Movie directory!");
 });
 
-//Create***********
+//Create new user***********
 app.post("/users", (req, res) => {
   const newUser = req.body;
 
@@ -126,7 +148,7 @@ app.post("/users", (req, res) => {
   }
 });
 
-//Update **********
+//Update user id **********
 app.put("/users/:id", (req, res) => {
   const { id } = req.params;
   const updatedUser = req.body;
@@ -141,7 +163,7 @@ app.put("/users/:id", (req, res) => {
   }
 });
 
-//Create ***********
+//Create add movie to favories ***********
 app.post("/users/:id/:moveTitle", (req, res) => {
   const { id, movieTitle } = req.params;
 
@@ -155,7 +177,7 @@ app.post("/users/:id/:moveTitle", (req, res) => {
   }
 });
 
-//Delete ***********
+//Delete remove movie title ***********
 app.delete("/users/:id/:moveTitle", (req, res) => {
   const { id, movieTitle } = req.params;
 
@@ -165,13 +187,15 @@ app.delete("/users/:id/:moveTitle", (req, res) => {
     user.favoriteMovies = user.favoriteMovies.filter(
       (title) => title !== movieTitle
     );
-    res.status(200).send("${movieTitle} has been added to user ${id}'s array");
+    res
+      .status(200)
+      .send("${movieTitle} has been removed from user ${id}'s array");
   } else {
     res.status(400).send("No such user");
   }
 });
 
-//Delete ***********
+//Delete user ***********
 app.delete("/users/:id/", (req, res) => {
   const { id } = req.params;
 
@@ -187,13 +211,13 @@ app.delete("/users/:id/", (req, res) => {
 
 //Read*************
 app.get("/movies", (req, res) => {
-  res.status(200).json(topMovies);
+  res.status(200).json(moviesovies);
 });
 
 //Read**************
 app.get("/movies/:title", (req, res) => {
   const { title } = req.perams.title;
-  const movie = movie.find((movie) => movie.Title === title);
+  const movie = movie.find((movies) => movies.title === title);
 
   if (movie) {
     res.status(200).json(movie);
