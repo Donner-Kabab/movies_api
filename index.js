@@ -1,128 +1,131 @@
 const express = require("express"),
   app = express(),
   bodyParser = require("body-parser"),
+  uuid = require("uuid"),
   morgan = require("morgan");
 
 app.use(bodyParser.json());
 
 let movies = [
   {
-    title: "Howl's Moving Castle",
-    director: {
-      name: "Hayao Miyazaki",
-      birthYear: 1941,
+    Title: "Howl's Moving Castle",
+    Director: {
+      Name: "Hayao Miyazaki",
+      BirthYear: 1941,
     },
-    genre: {
-      name: "Adventure",
+    Genre: {
+      Name: "Adventure",
     },
-    releaseYear: "2004",
+    ReleaseYear: "2004",
   },
   {
-    title: "The Silence of the Lambs",
-    director: {
-      name: "Jonathan Demme",
-      birthYear: 1944,
+    Title: "The Silence of the Lambs",
+    Director: {
+      Name: "Jonathan Demme",
+      BirthYear: 1944,
     },
-    genre: {
-      name: "Thriller",
+    Genre: {
+      Name: "Thriller",
     },
-    releaseYear: "1991",
+    ReleaseYear: "1991",
   },
   {
-    title: "Spirited Away",
-    director: {
-      name: "Hayao Miyazaki",
-      birthYear: 1941,
+    Title: "Spirited Away",
+    Director: {
+      Name: "Hayao Miyazaki",
+      BirthYear: 1941,
     },
-    genre: {
-      name: "Adventure",
+    Genre: {
+      Name: "Adventure",
     },
-    releaseYear: "2001",
+    ReleaseYear: "2001",
   },
   {
-    title: "Castle in the Sky",
-    director: {
-      name: "Hayao Miyazaki",
-      birthYear: 1941,
+    Title: "Castle in the Sky",
+    Director: {
+      Name: "Hayao Miyazaki",
+      BirthYear: 1941,
     },
-    genre: {
-      name: "Adventure",
+    Genre: {
+      Name: "Adventure",
     },
-    releaseYear: "1986",
+    ReleaseYear: "1986",
   },
   {
-    title: "Ponyo",
-    director: {
-      name: "Hayao Miyazaki",
-      birthYear: 1941,
+    Title: "Ponyo",
+    Director: {
+      Name: "Hayao Miyazaki",
+      BirthYear: 1941,
     },
-    genre: {
-      name: "Adventure",
+    Genre: {
+      Name: "Adventure",
     },
-    releaseYear: "2008",
+    ReleaseYear: "2008",
   },
   {
-    title: "Princess Mononoke",
-    director: {
-      name: "Mayao Miyazaki",
-      birthYear: 1941,
+    Title: "Princess Mononoke",
+    Director: {
+      Name: "Mayao Miyazaki",
+      BirthYear: 1941,
     },
-    genre: {
-      name: "Action",
+    Genre: {
+      Name: "Action",
     },
-    releaseYear: "1997",
+    ReleaseYear: "1997",
   },
   {
-    title: "Whisper of the Heart",
-    director: {
-      name: "Yoshifumi Kondo",
-      birthYear: 1950,
+    Title: "Whisper of the Heart",
+    Director: {
+      Name: "Yoshifumi Kondo",
+      BirthYear: 1950,
     },
-    genre: {
-      name: "Drama",
+    Genre: {
+      Name: "Drama",
     },
-    releaseYear: "1995",
+    ReleaseYear: "1995",
   },
   {
-    title: "Annabelle",
-    director: {
-      name: "John R. Leonetti",
-      birthYear: 1956,
+    Title: "Annabelle",
+    Director: {
+      Name: "John R. Leonetti",
+      BirthYear: 1956,
     },
-    genre: {
-      name: "Horror",
+    Genre: {
+      Name: "Horror",
     },
-    releaseYear: "2014",
+    ReleaseYear: "2014",
   },
   {
-    title: "Annabelle: Creation",
-    director: {
-      name: "David F. Sandberg",
-      birthYear: 1981,
+    Title: "Annabelle: Creation",
+    Director: {
+      Name: "David F. Sandberg",
+      BirthYear: 1981,
     },
-    genre: {
-      name: "Horror",
+    Genre: {
+      Name: "Horror",
     },
-    releaseYear: "2017",
+    ReleaseYear: "2017",
   },
   {
-    title: "Annabelle Comes Home",
-    director: {
-      name: "Gary Dauberman",
-      birthYear: "N/A",
+    Title: "Annabelle Comes Home",
+    Director: {
+      Name: "Gary Dauberman",
+      BirthYear: "N/A",
     },
-    genre: {
-      name: "Horror",
+    Genre: {
+      Name: "Horror",
     },
-    releaseYear: "2019",
+    ReleaseYear: "2019",
   },
 ];
 
 let users = [
   {
+    id: 1,
     Username: "JohnDoe",
     Email: "Johndoe@gmail.com",
     Birthdate: "01/01/00",
+    favoriteMovies: [],
   },
 ];
 
@@ -135,20 +138,20 @@ app.get("/", (req, res) => {
   res.send("Welcome to my Movie directory!");
 });
 
-//Create new user***********
+//Create new user*
 app.post("/users", (req, res) => {
   const newUser = req.body;
 
   if (newUser.name) {
-    newUser.id = uuid.v4;
+    newUser.id = uuid.v4();
     users.push(newUser);
-    res.status(201).json(users);
+    res.status(201).json(newUser);
   } else {
     res.status(400).send("users need names");
   }
 });
 
-//Update user id **********
+//Update user id **
 app.put("/users/:id", (req, res) => {
   const { id } = req.params;
   const updatedUser = req.body;
@@ -163,8 +166,8 @@ app.put("/users/:id", (req, res) => {
   }
 });
 
-//Create add movie to favories ***********
-app.post("/users/:id/:moveTitle", (req, res) => {
+//Create add movie to favories ***
+app.post("/users/:id/:movieTitle", (req, res) => {
   const { id, movieTitle } = req.params;
 
   let user = users.find((user) => user.id == id);
@@ -177,7 +180,7 @@ app.post("/users/:id/:moveTitle", (req, res) => {
   }
 });
 
-//Delete remove movie title ***********
+//Delete remove movie title ****
 app.delete("/users/:id/:moveTitle", (req, res) => {
   const { id, movieTitle } = req.params;
 
@@ -195,7 +198,7 @@ app.delete("/users/:id/:moveTitle", (req, res) => {
   }
 });
 
-//Delete user ***********
+//Delete user *****
 app.delete("/users/:id/", (req, res) => {
   const { id } = req.params;
 
@@ -209,15 +212,15 @@ app.delete("/users/:id/", (req, res) => {
   }
 });
 
-//Read*************
+//Read*
 app.get("/movies", (req, res) => {
-  res.status(200).json(moviesovies);
+  res.status(200).json(movies);
 });
 
-//Read**************
+//Read*
 app.get("/movies/:title", (req, res) => {
-  const { title } = req.perams.title;
-  const movie = movie.find((movies) => movies.title === title);
+  const { title } = req.params;
+  const movie = movies.find((movie) => movie.Title === title);
 
   if (movie) {
     res.status(200).json(movie);
@@ -226,10 +229,10 @@ app.get("/movies/:title", (req, res) => {
   }
 });
 
-//Read***********
+//Read*
 app.get("/movies/genre/:genreName", (req, res) => {
-  const genreName = req.params;
-  const genre = movie.find((movie) => movie.Genre.Name === genreName).Genre;
+  const { genreName } = req.params;
+  const genre = movies.find((movie) => movie.Genre.Name === genreName).Genre;
 
   if (genre) {
     res.status(200).json(genre);
@@ -238,12 +241,12 @@ app.get("/movies/genre/:genreName", (req, res) => {
   }
 });
 
-//Read***********
+//Read*
 app.get("/movies/director/:directorName", (req, res) => {
-  const directorName = req.perams;
+  const { directorName } = req.perams;
   const director = movie.find(
     (movie) => movie.Director.Name === directorName
-  ).Director;
+  ).Directors;
 
   if (director) {
     res.status(200).json(director);
