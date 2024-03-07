@@ -242,11 +242,11 @@ app.get("/movies/genre/:genreName", (req, res) => {
 });
 
 //Read*
-app.get("/movies/director/:directorName", (req, res) => {
-  const { directorName } = req.perams;
-  const director = movie.find(
+app.get("/movies/directors/:directorName", (req, res) => {
+  const { directorName } = req.params;
+  const director = movies.find(
     (movie) => movie.Director.Name === directorName
-  ).Directors;
+  ).Director;
 
   if (director) {
     res.status(200).json(director);
