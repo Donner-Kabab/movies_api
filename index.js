@@ -3,131 +3,15 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   uuid = require("uuid"),
   morgan = require("morgan");
+const mongoose = require("mongoose");
+const Models = require("./models.js");
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect("mongodb://localhost:27017/test");
 
 app.use(bodyParser.json());
-
-let movies = [
-  {
-    Title: "Howl's Moving Castle",
-    Director: {
-      Name: "Hayao Miyazaki",
-      BirthYear: 1941,
-    },
-    Genre: {
-      Name: "Adventure",
-    },
-    ReleaseYear: "2004",
-  },
-  {
-    Title: "The Silence of the Lambs",
-    Director: {
-      Name: "Jonathan Demme",
-      BirthYear: 1944,
-    },
-    Genre: {
-      Name: "Thriller",
-    },
-    ReleaseYear: "1991",
-  },
-  {
-    Title: "Spirited Away",
-    Director: {
-      Name: "Hayao Miyazaki",
-      BirthYear: 1941,
-    },
-    Genre: {
-      Name: "Adventure",
-    },
-    ReleaseYear: "2001",
-  },
-  {
-    Title: "Castle in the Sky",
-    Director: {
-      Name: "Hayao Miyazaki",
-      BirthYear: 1941,
-    },
-    Genre: {
-      Name: "Adventure",
-    },
-    ReleaseYear: "1986",
-  },
-  {
-    Title: "Ponyo",
-    Director: {
-      Name: "Hayao Miyazaki",
-      BirthYear: 1941,
-    },
-    Genre: {
-      Name: "Adventure",
-    },
-    ReleaseYear: "2008",
-  },
-  {
-    Title: "Princess Mononoke",
-    Director: {
-      Name: "Mayao Miyazaki",
-      BirthYear: 1941,
-    },
-    Genre: {
-      Name: "Action",
-    },
-    ReleaseYear: "1997",
-  },
-  {
-    Title: "Whisper of the Heart",
-    Director: {
-      Name: "Yoshifumi Kondo",
-      BirthYear: 1950,
-    },
-    Genre: {
-      Name: "Drama",
-    },
-    ReleaseYear: "1995",
-  },
-  {
-    Title: "Annabelle",
-    Director: {
-      Name: "John R. Leonetti",
-      BirthYear: 1956,
-    },
-    Genre: {
-      Name: "Horror",
-    },
-    ReleaseYear: "2014",
-  },
-  {
-    Title: "Annabelle: Creation",
-    Director: {
-      Name: "David F. Sandberg",
-      BirthYear: 1981,
-    },
-    Genre: {
-      Name: "Horror",
-    },
-    ReleaseYear: "2017",
-  },
-  {
-    Title: "Annabelle Comes Home",
-    Director: {
-      Name: "Gary Dauberman",
-      BirthYear: "N/A",
-    },
-    Genre: {
-      Name: "Horror",
-    },
-    ReleaseYear: "2019",
-  },
-];
-
-let users = [
-  {
-    id: 1,
-    Username: "JohnDoe",
-    Email: "Johndoe@gmail.com",
-    Birthdate: "01/01/00",
-    favoriteMovies: [],
-  },
-];
 
 app.use(morgan("common"));
 
@@ -139,45 +23,84 @@ app.get("/", (req, res) => {
 });
 
 //Create new user*
-app.post("/users", (req, res) => {
-  const newUser = req.body;
-
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).send("users need names");
-  }
+app.post("/users", async (req, res) => {
+  await Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + "already exists");
+      } else {
+        Users.create({
+          Username: req.body.Username,
+          Password: req.body.Password,
+          Email: req.body.Email,
+          Birthday: req.body.Birthday,
+        })
+          .then((user) => {
+            res.status(201).json(user);
+          })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send("Error: " + error);
+          });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error: " + error);
+    });
 });
 
-//Update user id **
-app.put("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedUser = req.body;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.name = updatedUser.name;
-    res.status(200).json(user);
-  } else {
-    res.status(400).send("No such user");
-  }
+// Get all movies
+app.get("/movies", async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-//Create add movie to favories ***
-app.post("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
+// Update a user's info, by username
+app.put("/users/:Username", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $set: {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday,
+      },
+    },
+    { new: true }
+  ) // This line ensures updated document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error:" + err);
+    });
+});
 
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.favoriteMovies.push(movieTitle);
-    res.status(200).send("${movieTitle} has been added to user ${id}'s array");
-  } else {
-    res.status(400).send("No such user");
-  }
+// CREATE Add a movie to user's favorites
+app.post("/users/:Username/movies/:MovieID", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $push: { FavoriteMovies: req.params.MovieID },
+    },
+    { new: true }
+  ) // This line makes sure that the updated document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error:" + err);
+    });
 });
 
 //Delete remove movie title ****
@@ -198,18 +121,20 @@ app.delete("/users/:id/:moveTitle", (req, res) => {
   }
 });
 
-//Delete user *****
-app.delete("/users/:id/", (req, res) => {
-  const { id } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    users = user.filter((user) => user.id != id);
-    res.status(200).send("user ${id} has been deleted");
-  } else {
-    res.status(400).send("No such user");
-  }
+// Delete a user by username
+app.delete("/users/:Username", async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + " was not found");
+      } else {
+        res.status(200).send(req.params.Username + " was deleted.");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 //Read*
@@ -217,42 +142,40 @@ app.get("/movies", (req, res) => {
   res.status(200).json(movies);
 });
 
-//Read*
-app.get("/movies/:title", (req, res) => {
-  const { title } = req.params;
-  const movie = movies.find((movie) => movie.Title === title);
-
-  if (movie) {
-    res.status(200).json(movie);
-  } else {
-    res.status(400).send("no such movie");
-  }
+// Get a movie by title
+app.get("/movies/:title", async (req, res) => {
+  await Movies.findOne({ title: req.params.title })
+    .then((movies) => {
+      res.json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-//Read*
-app.get("/movies/genre/:genreName", (req, res) => {
-  const { genreName } = req.params;
-  const genre = movies.find((movie) => movie.Genre.Name === genreName).Genre;
-
-  if (genre) {
-    res.status(200).json(genre);
-  } else {
-    res.status(400).send("no such genre");
-  }
+//read genre by name
+app.get("/movie/genre/:genreName", async (req, res) => {
+  await Movies.findOne({ genre: req.params.genreName })
+    .then((movies) => {
+      res.json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-//Read*
-app.get("/movies/directors/:directorName", (req, res) => {
-  const { directorName } = req.params;
-  const director = movies.find(
-    (movie) => movie.Director.Name === directorName
-  ).Director;
-
-  if (director) {
-    res.status(200).json(director);
-  } else {
-    res.status(400).send("no such director");
-  }
+//read director
+app.get("/directors/:directorName", async (req, res) => {
+  await Director.findOne({ name: req.params.directorName })
+    .then((directors) => {
+      res.json(directors);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 app.use((err, req, res, next) => {

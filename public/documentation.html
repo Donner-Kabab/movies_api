@@ -16,131 +16,188 @@
     <table border="1">
       <thead>
         <tr>
-          <th>Request</th>
+          <th>REQUEST</th>
           <th>URL</th>
-          <th>HTTP Method</th>
-          <th>Request body</th>
-          <th>Response body</th>
+          <th>HTTP METHOD</th>
+          <th>Request body format</th>
+          <th>Response body format</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>User login</td>
-          <td>/login</td>
-          <td>POST</td>
-          <td>{ 'Username': '{username}', 'Password': '{Password}' },<br /></td>
-          <td>{ 'token': '######' }</td>
+          <td>Return a list of ALL usersr</td>
+          <td>/users</td>
+          <td>GET</td>
+          <td>None</td>
+          <td>A JSON object holding data about all users</td>
         </tr>
         <tr>
-          <td>Register a new user</td>
+          <td>Create user</td>
           <td>/users</td>
           <td>POST</td>
           <td>
-            { 'Name': 'John Doe',<br />
-            'Username': '{username}',<br />
-            'Email': {email@example.com},<br />
-            'Birth-date': 'YYYY-MM-DD' }
+            A JSON object holding data about the user to add, structured
+            like:<br />
+            <code>
+              { "Username": "exampleuser", "Password": "examplepass", "Email":
+              "example@gmail.com", "Birth": { "$date": "MM-DD-YYYY" },
+              "favoriteMovies": [ "Title" ] }
+            </code>
           </td>
           <td>
-            { '_id': '######',<br />
-            'Name': 'John Doe',<br />
-            'Username': '{username}',<br />
-            'Email': {email@example.com},<br />
-            'Birth-date': 'YYYY-MM-DD', <br />
-            'token': '######' }
+            A JSON object holding data about a userid, username, email,
+            password, birthdate, favorite movies. Example:
+            <code>
+              { "_id" : ObjectId(12345678900) "Username": "Markmovies",
+              "Password": "moviesaver23", "Email": "Mark@gmail.com", "Birth": {
+              "$date": "MM-DD-YYYY" }, "favoriteMovies": [ "Harry Potter and the
+              Half-Blood Prince" }
+            </code>
           </td>
         </tr>
         <tr>
-          <td>Get list of movies</td>
+          <td>Update user</td>
+          <td>/users/:Username</td>
+          <td>PUT</td>
+          <td>
+            A JSON object holding data to be updated <br />
+            <code>
+              { "Username": "exampleuser", "Password": "examplepass", "Email":
+              "example@gmail.com", "Birth": { "$date": "MM-DD-YYYY" },
+              "favoriteMovies": [ "Title" ] }
+            </code>
+          </td>
+          <td>
+            A JSON object holding data about a single movie, id, title, genre,
+            director. Example: <br />
+            <code>
+              { "_id" : ObjectId(12345678900) "Username": "eva_user",
+              "Password": "eva_secure_pass", "Email": "eva@email.com", "Birth":
+              {"$date": "MM-DD-YYYY" }, "favoriteMovies": [ "Inception"] }
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>Create user's favourite movie</td>
+          <td>/users/:username/movies/:movieName</td>
+          <td>POST</td>
+          <td>None</td>
+          <td>
+            A JSON object holding data about a single movie, title, genre,
+            director. Example: <br />
+            <code>
+              { "_id" : ObjectId(12345678900) {"Username": "exampleuser",
+              "Password": "examplepass", "Email": "example@gmail.com", "Birth":
+              { "$date": "MM-DD-YYYY" }, "favoriteMovies": ["Title"] } }
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>Delete user by user name</td>
+          <td>/users/:username</td>
+          <td>DELETE</td>
+          <td>None</td>
+          <td>
+            A text message indicating whether the movie was successfully
+            removed.
+          </td>
+        </tr>
+        <tr>
+          <td>Return list of ALL movies</td>
           <td>/movies</td>
           <td>GET</td>
-          <td>None</td>
+          <td>NONE</td>
+          <td>A JSON object holding data about all movies</td>
+        </tr>
+        <tr>
+          <td>Return movie data by title name</td>
+          <td>/movies/:title</td>
+          <td>GET</td>
+          <td>NONE</td>
           <td>
-            An array of JSON objects holding data about all the movies in the
-            database
+            A JSON object holding data about the movie ID, title,
+            description,genre, director,featured:<br />
+            <code>
+              { "_id": ObjectId(123456678990), "title": "Inception",
+              "description": "Inception is a mind-bending science fiction
+              thriller directed by Christopher Nolan. The film explores the
+              concept of dreams within dreams, taking the audience on a visually
+              stunning and intellectually stimulating journey through layers of
+              subconsciousness.", "genre": { "name": "Science Fiction" },
+              "director": { "name": "Christopher Nolan", "_id": { "$oid":
+              "65d27572e6eb7f66bf7b872d" } }, "featured": true }
+            </code>
           </td>
         </tr>
         <tr>
-          <td>Get list of movies by director</td>
-          <td>/movies/director/:directorName</td>
+          <td>Get movie by ID</td>
+          <td>/movies/id/:idNumber</td>
+          <td>GET</td>
+          <td>NONE</td>
+          <td>
+            A JSON object holding data about the movie ID, title,
+            description,genre, director,featured:<br />
+            <code>
+              { "_id": ObjectId(123456678990), "title": "Inception",
+              "description": "Inception is a mind-bending science fiction
+              thriller directed by Christopher Nolan. The film explores the
+              concept of dreams within dreams, taking the audience on a visually
+              stunning and intellectually stimulating journey through layers of
+              subconsciousness.", "genre": { "name": "Science Fiction" },
+              "director": { "name": "Christopher Nolan", "_id": { "$oid":
+              "65d27572e6eb7f66bf7b872d" } }, "featured": true }
+            </code>
+          </td>
+        </tr>
+        <tr>
+          <td>Return genres from movies list</td>
+          <td>/movies/genre/:genreName</td>
           <td>GET</td>
           <td>None</td>
           <td>
-            An array of JSON objects holding data about all the movies by
-            requested director
+            A JSON object holding data about the movie ID, title,
+            description,genre, director,featured related to specified genre<br />
+            <code>
+              { "_id": ObjectId(123456678990), "title": "Inception",
+              "description": "Inception is a mind-bending science fiction
+              thriller directed by Christopher Nolan. The film explores the
+              concept of dreams within dreams, taking the audience on a visually
+              stunning and intellectually stimulating journey through layers of
+              subconsciousness.", "genre": { "name": "Science Fiction" },
+              "director": { "name": "Christopher Nolan", "_id": { "$oid":
+              "65d27572e6eb7f66bf7b872d" } }, "featured": true }
+            </code>
           </td>
         </tr>
         <tr>
-          <td>Get list of movies by genre</td>
-          <td>/movies/genres/{genreName}</td>
+          <td>Return genres from genres list</td>
+          <td>/genre/:genreName</td>
           <td>GET</td>
           <td>None</td>
           <td>
-            An array of JSON objects holding data about all the movies by
-            requested genre
+            A JSON object holding data about the genre ID, name and
+            description:<br />
+            <code>
+              { "_id": ObjectId(123456678990), "name": "Science Fiction:,
+              "description": "Imaginative genre often set in futuristic or
+              speculative worlds." }
+            </code>
           </td>
         </tr>
         <tr>
-          <td>Get data about a movie by title</td>
-          <td>/movies/{Title}</td>
+          <td>Return directors from directors list</td>
+          <td>/directors/:directorName</td>
           <td>GET</td>
-          <td>
-            {'movie': 'title',<br />
-            'director': 'name',<br />
-            'releaseYear': 'releaseYear,<br />
-            'genre': 'action' }
-          </td>
-          <td>
-            {'title': 'Howl's Moving Castle',<br />
-            'directorName': 'Hayao Miyazaki',<br />
-            'release-year': '2004',<br />
-            'genre': 'Adventure' }
-          </td>
-        </tr>
-        <tr>
-          <td>Update user details</td>
-          <td>/users/{Username}</td>
-          <td>PUT</td>
-          <td>
-            { 'Name': 'John Doe',<br />
-            'Username': '{username}',<br />
-            'Email': {email@example.com},<br />
-            'BirthDate': 'MM-DD-YY' }
-          </td>
-          <td>
-            { '_id': '######',<br />
-            'Name': 'John Doe',<br />
-            'Username': '{username}',<br />
-            'Email': {email@example.com},<br />
-            'BirthDate': 'MM-DD-YY', <br />
-            'token': '######' }
-          </td>
-        </tr>
-        <tr>
-          <td>Delete user</td>
-          <td>/users/{Username}</td>
-          <td>DELETE</td>
-          <td>None</td>
-          <td>A confirmation that the user has been deleted</td>
-        </tr>
-        <tr>
-          <td>Add a movie to a user's favorites list</td>
-          <td>/users/{Username}/movies/{title}</td>
-          <td>PUT</td>
           <td>None</td>
           <td>
-            A confirmation if the movie was successfully added to the user's
-            favorited movies
-          </td>
-        </tr>
-        <tr>
-          <td>Remove a movie from a user's favorites list</td>
-          <td>/users/{Username}/movies/{title}</td>
-          <td>DELETE</td>
-          <td>None</td>
-          <td>
-            A confirmation if the movie was successfully removed from the user's
-            favorited movies
+            A JSON object holding data about director's ID, name, bio, Birth,
+            Death . <br />
+            <code>
+              { "_id": { "$oid": "65d27572e6eb7f66bf7b872d"}, "name":
+              "Christopher Nolan", "bio": "Renowned filmmaker known for
+              mind-bending narratives.", "Birth": {"$date": "MM-DD-YYYY"},
+              "Death": null }
+            </code>
           </td>
         </tr>
       </tbody>
