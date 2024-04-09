@@ -13,7 +13,10 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const Directors = Models.Director;
 
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 //mongoose.connect("mongodb://localhost:27017/test");
 
@@ -80,20 +83,16 @@ app.post(
 );
 
 // Get all movies
-app.get(
-  "/movies",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    await Movies.find()
-      .then((movies) => {
-        res.status(201).json(movies);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      });
-  }
-);
+app.get("/movies", async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
 
 // Update a user's info, by username
 app.put(
@@ -235,6 +234,6 @@ app.get(
 );
 
 //Listen for requests
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('Listening on port =' + PORT);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Listening on port =" + PORT);
 });
