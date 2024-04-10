@@ -3,8 +3,7 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   uuid = require("uuid"),
   morgan = require("morgan"),
-  cors = require('cors'),
-  app.use(cors()); 
+  cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
@@ -21,7 +20,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
 });
 
 //mongoose.connect("mongodb://localhost:27017/test");
-
+app.use(cors());
 app.use(bodyParser.json());
 
 let auth = require("./auth")(app);
