@@ -2,7 +2,9 @@ const express = require("express"),
   app = express(),
   bodyParser = require("body-parser"),
   uuid = require("uuid"),
-  morgan = require("morgan");
+  morgan = require("morgan"),
+  cors = require('cors'),
+  app.use(cors()); 
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
