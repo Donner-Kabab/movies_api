@@ -3,7 +3,7 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   uuid = require("uuid"),
   morgan = require("morgan"),
-  cors = require('cors');
+  cors = require("cors");
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
@@ -83,7 +83,9 @@ app.post(
   }
 );
 
-// Get all movies
+/**
+ * fetch movies
+ */
 app.get("/movies", async (req, res) => {
   await Movies.find()
     .then((movies) => {
